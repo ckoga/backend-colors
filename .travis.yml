@@ -1,15 +1,12 @@
 language: node_js
 node_js:
-  - "node"
+- node
 services:
-  - postgresql
+- postgresql
 before_script:
-  - psql -c 'CREATE DATABASE travis_test;' -U postgres
+- psql -c 'CREATE DATABASE colors_test;' -U postgres
 notifications:
   email: false
 deploy:
-  provider: heroku
   api_key:
-    secure: POZEVZ7mNwqAo1Ts6XjUVoQsQFdVPYus2d0VaYI1K...itGoesOnForAWhile
-  app: travis-test-penguins
-  skip_cleanup: true
+    secure: YOi+/XBKIpb3WNhyhe5qpkKfSxG4NAQX4Dm0l3QiTRsCTxmmOC7ZFqaQKf1PeiqHrL322rGVbHHPqBJtkI06cC3lzZHW5z0cGbAidBATkW2j9ZyHreuoxAEYwhMBvKC4e2xEybGZH4jWIuEtuTd7btP85EGvk2eQ7/cK9uUdqm0snPvXmdWM8x0yXNhrB5ofDEAfGfcYOM64ZTJk64YcWeMTjle+4eiy/CAanYUkV7WUgaqjGdj05Fm5jrUIA5A4X6F7cg5DesFiHjfjTmlpuf3960caLxH8E+/EiHEEeaK4LYWoByEXEZ6WmztuqaCdWorAOOeCHvatRBmKd/CLNGyPZoALWqvQaON5fUw1gcXIl8rHt1AvWUexAl2zEAX2O7xP1Q11PB74jWPjOIsATZgktne4Y0pbs2So88iOkS6AS/pQeEet4GZa9+KsF5lWXq/gJEeRS+khf6O9JD/GwycuZYM5o1JIpzYjrwCAg9xNHVAcSwRqlfwoBbuB1q90lO5kEwJlNvfguLPjtWKcikf2/63UnSua4Ou5iqdi0Wg4cQJ1GrFWij2ZxO2cMu3tiJsmEJfPyx62dRLXvVx9USyhRL3jakKZprcqJLsT8Bxho5XqB4cnZaBZg5Q8VlqO1XQ2hlRBvAwSM3mo6vFezEAGkFwlWA0JptqAW1b4WCE=
