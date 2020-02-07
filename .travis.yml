@@ -7,3 +7,9 @@ before_script:
   - psql -c 'CREATE DATABASE travis_test;' -U postgres
 notifications:
   email: false
+deploy:
+  provider: heroku
+  api_key:
+    secure: POZEVZ7mNwqAo1Ts6XjUVoQsQFdVPYus2d0VaYI1K...itGoesOnForAWhile
+  app: travis-test-penguins
+  skip_cleanup: true
