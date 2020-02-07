@@ -4,7 +4,7 @@
   "description": "",
   "main": "knexfile.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "NODE_ENV=test jest --exit",
     "start": "nodemon --exec babel-node server.js"
   },
   "keywords": [],
