@@ -50,7 +50,7 @@ app.post('/api/v1/projects', async (request, response) => {
     }
   }
 
-  let palette1_id = await database('palettes').where({title: project.palette1_name}).select('id');
+  let palette1_id = await database('palettes').where({ title: project.palette1_name }).select('id');
   let palette2_id = await database('palettes').where({ title: project.palette2_name }).select('id');
   let palette3_id = await database('palettes').where({ title: project.palette3_name }).select('id');
 
