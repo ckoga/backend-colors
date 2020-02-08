@@ -72,13 +72,21 @@ app.post('/api/v1/projects', async (request, response) => {
 
 app.delete('/api/v1/palettes/:id', async (request, response) => {
   try {
-    console.log(request.params.id)
+    // console.log(request.params.id)
     await database('palettes').where({ id: request.params.id }).del()
-    console.log('we here');
+    // console.log('we here');
     response.status(204).json()
   } catch (error) {
     response.status(500).json({ error })
   }
 })
 
+app.get('/api/v1/palettes', async (request, response) => {
+  try {
+    const palettes = await database('palettes').select();
+    response.status(200).json(palettes);
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
 module.exports = app;

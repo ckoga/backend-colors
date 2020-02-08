@@ -86,6 +86,18 @@ describe('server', () => {
       
       expect(response.status).toBe(204);
       expect(remainingPalettes.length).toEqual(2)
+    });
+  })
+
+  describe('GET /api/v1/palettes', () => {
+    it('should return a status code and all of the palettes', async () => {
+      const expectedPalettes = await database('palettes').select();
+
+      const response = await request(app).get('/api/v1/palettes');
+      const palettes = response.body;
+
+      expect(response.status).toBe(200);
+      expect(palettes[0].id).toEqual(expectedPalettes[0].id);
     })
   })
 })
