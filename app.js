@@ -89,4 +89,22 @@ app.get('/api/v1/palettes', async (request, response) => {
     response.status(500).json({ error })
   }
 })
+
+app.get('/api/v1/palettes/:name', async (request, response) => {
+  console.log('yo')
+  const { title } = request.params
+
+  try {
+    const palette = await database('palettes').where('title', title)
+    if (project.length) {
+      response.status(200).json(palette)
+    } else {
+      response.status(404).json({ error: 'Palette not found' })
+    }
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
+
+
 module.exports = app;

@@ -72,6 +72,19 @@ describe('server', () => {
       expect(response.status).toBe(201);
       expect(project.title).toEqual('Unicorn farts')
     }) 
+
+    it('should return a 422 status code when the required parameters are incorrect', async () => {
+      const badProject = {
+        title: 'Normal Colors',
+        palette2_name: 'Warm colors',
+        palette3_name: 'Cool colors'
+      }
+
+      const response = await request(app).post('/api/v1/projects').send(badProject)
+      
+      expect(response.status).toBe(422);
+      expect(response.body.error).toEqual('Expected POST format: { title: <string>, palette1_name: <string>, palette2_name: <string>, palette3_name: <string>}.  You\'re missing the palette1_name property.')
+    })
   })
 
   describe('DELETE', () => {
@@ -100,4 +113,22 @@ describe('server', () => {
       expect(palettes[0].id).toEqual(expectedPalettes[0].id);
     })
   })
+
+  describe('GET /api/v1/palettes/:id', () => {
+    it('should return a specific palette by id and a status code of 200', async () => {
+      const expectedPalette = await database('palettes').first();
+      console.log(expectedPalette)
+      // palettes are going to be looked up by name (title)?
+      // back end gets the name and finds the palette
+      // json the palette back to the application
+      const { title } = expectedPalette;
+
+      const response = await request(app).get(`/api/v1/palettes/${title}`);
+      const result = response.body[0]
+      console.log(result)
+      expect(response.status).toBe(200);
+      expect(result.title).toEqual(title);
+    })
+  })
+
 })
