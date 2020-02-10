@@ -39,6 +39,26 @@ app.get('/api/v1/projects/:id', async (request, response) => {
   }
 });
 
+app.post('/api/v1/palettes', async (request, response) => {
+  const palette = request.body;
+
+  for (let requiredParameter of ['title', 'color1', 'color2', 'color3', 'color4', 'color5']) {
+    if (!palette[requiredParameter]) {
+      return response.status(422).send({
+        error: `Expected POST format: { title: <string>, color1: <string>, color2: <string>, color3: <string>, color4: <string>, color5: <string>}.  You\'re missing the ${requiredParameter} property.`
+      })
+    }
+  }
+
+  try {
+    let newPalette = await database('palettes').insert(palette, '*');
+    
+    response.status(201).json(newPalette[0])
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
+
 app.post('/api/v1/projects', async (request, response) => {
   const project = request.body;
   
@@ -62,23 +82,54 @@ app.post('/api/v1/projects', async (request, response) => {
   }
 
   try {
-    const id = await database('projects').insert(newProject, 'id');
-    
-    response.status(201).json({ id: id[0] })
+    const project = await database('projects').insert(newProject, '*');
+    response.status(201).json(project[0])
   } catch (error) {
     response.status(500).json({ error })
   }
 })
 
+app.delete('/api/v1/projects/:id', async (request, response) => {
+  try {
+    await database('projects').where({ id: request.params.id }).del();
+    response.status(204).json();
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+})
+
 app.delete('/api/v1/palettes/:id', async (request, response) => {
   try {
-    console.log(request.params.id)
     await database('palettes').where({ id: request.params.id }).del()
-    console.log('we here');
     response.status(204).json()
   } catch (error) {
     response.status(500).json({ error })
   }
 })
+
+app.get('/api/v1/palettes', async (request, response) => {
+  try {
+    const palettes = await database('palettes').select();
+    response.status(200).json(palettes);
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
+
+app.get('/api/v1/palettes/:id', async (request, response) => {
+  const { id } = request.params
+
+  try {
+    const palette = await database('palettes').where('id', id)
+    if (palette.length) {
+      response.status(200).json(palette[0])
+    } else {
+      response.status(404).json({ error: 'Palette not found' })
+    }
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
+
 
 module.exports = app;
