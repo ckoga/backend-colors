@@ -64,7 +64,7 @@ describe('server', () => {
       }
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-      
+      console.log(response.body)
       const projects = await database('projects').where('id', response.body.id);
 
       const project = projects[0];
@@ -87,11 +87,47 @@ describe('server', () => {
     })
   })
 
+  describe('POST /api/v1/palettes', () => {
+    it('should be able to POST a palette', async () => {
+      const newPalette = {
+        title: 'Colors',
+        color1: '#867CBC',
+        color2: '#E2F7EF',
+        color3: '#23889A',
+        color4: '#A6E508',
+        color5: '#D15120'
+      }
+
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+
+      const palettes = await database('palettes').where('id', response.body.id)
+      const palette = palettes[0];
+      
+      expect(response.status).toBe(201);
+      expect(palette.title).toEqual('Colors')
+    });
+
+    it('should return a 422 status code when the required parameters are incorrect', async () => {
+      const badPalette = {
+        title: 'Colors',
+        color1: '#867CBC',
+        color2: '#E2F7EF',
+        color4: '#A6E508',
+        color5: '#D15120'
+      }
+
+      const response = await request(app).post('/api/v1/palettes').send(badPalette)
+
+      expect(response.status).toBe(422);
+      expect(response.body.error).toEqual('Expected POST format: { title: <string>, color1: <string>, color2: <string>, color3: <string>, color4: <string>, color5: <string>}.  You\'re missing the color3 property.')
+    })
+  })
+
   describe('DELETE /api/v1/projects/:id', () => {
     it('should delete a project by its id', async () => {
       const mockProject = await database('projects').first();
       const { id } = mockProject;
-      console.log('DELETE: ', remainingProjects)
+      
       const response = await request(app).delete(`/api/v1/projects/${id}`);
       
       const remainingProjects = await database('projects').select();
@@ -135,7 +171,7 @@ describe('server', () => {
 
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const result = response.body
-      console.log(result)
+      
       expect(response.status).toBe(200);
       expect(result.id).toEqual(id);
     });
