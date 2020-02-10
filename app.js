@@ -72,9 +72,9 @@ app.post('/api/v1/projects', async (request, response) => {
 
 app.delete('/api/v1/palettes/:id', async (request, response) => {
   try {
-    // console.log(request.params.id)
+    
     await database('palettes').where({ id: request.params.id }).del()
-    // console.log('we here');
+    
     response.status(204).json()
   } catch (error) {
     response.status(500).json({ error })
@@ -90,14 +90,13 @@ app.get('/api/v1/palettes', async (request, response) => {
   }
 })
 
-app.get('/api/v1/palettes/:name', async (request, response) => {
-  console.log('yo')
-  const { title } = request.params
+app.get('/api/v1/palettes/:id', async (request, response) => {
+  const { id } = request.params
 
   try {
-    const palette = await database('palettes').where('title', title)
-    if (project.length) {
-      response.status(200).json(palette)
+    const palette = await database('palettes').where('id', id)
+    if (palette.length) {
+      response.status(200).json(palette[0])
     } else {
       response.status(404).json({ error: 'Palette not found' })
     }

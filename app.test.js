@@ -88,22 +88,21 @@ describe('server', () => {
   })
 
   describe('DELETE', () => {
-    it.skip('should delete a palette by its id', async () => {
+    it('should delete a palette by its id', async () => {
       const mockPalette = await database('palettes').first();
       const { id } = mockPalette;
       
-      console.log(id)
       const response = await request(app).delete(`/api/v1/palettes/${id}`);
-      console.log(response.status)
+      
       const remainingPalettes = await database('palettes').select();
       
       expect(response.status).toBe(204);
-      expect(remainingPalettes.length).toEqual(2)
+      expect(remainingPalettes.length).toEqual(3)
     });
   })
 
   describe('GET /api/v1/palettes', () => {
-    it('should return a status code and all of the palettes', async () => {
+    it('should return a 200 status code and all of the palettes', async () => {
       const expectedPalettes = await database('palettes').select();
 
       const response = await request(app).get('/api/v1/palettes');
@@ -117,18 +116,23 @@ describe('server', () => {
   describe('GET /api/v1/palettes/:id', () => {
     it('should return a specific palette by id and a status code of 200', async () => {
       const expectedPalette = await database('palettes').first();
-      console.log(expectedPalette)
-      // palettes are going to be looked up by name (title)?
-      // back end gets the name and finds the palette
-      // json the palette back to the application
-      const { title } = expectedPalette;
+      
+      const { id } = expectedPalette;
 
-      const response = await request(app).get(`/api/v1/palettes/${title}`);
-      const result = response.body[0]
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const result = response.body
       console.log(result)
       expect(response.status).toBe(200);
-      expect(result.title).toEqual(title);
-    })
-  })
+      expect(result.id).toEqual(id);
+    });
 
+    it('should return a 404 status code when a palette does not exist', async () => {
+      const invalidId = -1;
+
+      const response = await request(app).get(`/api/v1/palettes/${invalidId}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('Palette not found')
+    })
+  });
 })
