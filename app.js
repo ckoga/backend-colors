@@ -70,11 +70,19 @@ app.post('/api/v1/projects', async (request, response) => {
   }
 })
 
+app.delete('/api/v1/projects/:id', async (request, response) => {
+  try {
+    await database('projects').where({ id: request.params.id }).del();
+    response.status(204).json();
+  } catch (error) {
+    console.log(error)
+    response.status(500).json({ error });
+  }
+})
+
 app.delete('/api/v1/palettes/:id', async (request, response) => {
   try {
-    
     await database('palettes').where({ id: request.params.id }).del()
-    
     response.status(204).json()
   } catch (error) {
     response.status(500).json({ error })

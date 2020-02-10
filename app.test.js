@@ -54,7 +54,7 @@ describe('server', () => {
     });
   })
 
-  describe('POST ', () => {
+  describe('POST /api/v1/projects', () => {
     it('should post new project to the db', async () => {
       const newProject = {
         title: 'Unicorn farts',
@@ -87,7 +87,21 @@ describe('server', () => {
     })
   })
 
-  describe('DELETE', () => {
+  describe('DELETE /api/v1/projects/:id', () => {
+    it('should delete a project by its id', async () => {
+      const mockProject = await database('projects').first();
+      const { id } = mockProject;
+      console.log('DELETE: ', remainingProjects)
+      const response = await request(app).delete(`/api/v1/projects/${id}`);
+      
+      const remainingProjects = await database('projects').select();
+
+      expect(response.status).toBe(204);
+      expect(remainingProjects.length).toEqual(0);
+    })
+  })
+
+  describe('DELETE /api/v1/palettes/:id', () => {
     it('should delete a palette by its id', async () => {
       const mockPalette = await database('palettes').first();
       const { id } = mockPalette;
