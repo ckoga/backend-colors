@@ -145,5 +145,18 @@ app.patch('/api/v1/projects/:id', async (request, response) => {
   } catch (error) {
     response.status(500).json({ error })
   }
+});
+
+app.patch('/api/v1/palettes/:id', async (request, response) => {
+  const newTitle = request.body;
+  const { id } = request.params;
+
+  try {
+    console.log(newTitle)
+    const updatedPalette = await database('palettes').where({ id: id }).update(newTitle, 'id');
+    !updatedPalette ? response.sendStatus(404) : response.status(200).json(updatedPalette)
+  } catch (error) {
+    response.status(500).json({ error })
+  }
 })
 module.exports = app;

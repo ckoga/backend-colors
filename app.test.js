@@ -198,14 +198,38 @@ describe('server', () => {
       expect(response.status).toBe(200);
       expect(expectedProject.title).toEqual('80\'s Neon');
     })
+    
+    it('should return a 404 if a project ID does not exist', async () => {
+      const invalidId = -2;
+  
+      const response = await request(app).get(`/api/v1/projects/${invalidId}`);
+  
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('Project not found')
+    });
   });
 
-  it('should return a 404 if a project ID does not exist', async () => {
-    const invalidId = -2;
+  describe('PATCH /api/v1/palettes/:id', () => {
+    it('should change the name of a palette and return a status code of 200', async () => {
+      let expectedPalette = await database('palettes').where({title: 'TEST NUKE PALETTE'});
+      const { id } = expectedPalette[0];
+      expect(expectedPalette[0].title).toEqual('TEST NUKE PALETTE');
+      
+      const newTitle = { title: 'TEST CHANGE PALETTE' };
+      const response = await request(app).patch(`/api/v1/palettes/${id}`).send(newTitle);
+      let patchedPalette = await database('palettes').where({title: 'TEST CHANGE PALETTE'});
+      console.log(patchedPalette)
+      expect(response.status).toBe(200);
+      expect(patchedPalette[0].title).toEqual('TEST CHANGE PALETTE');
+    });
 
-    const response = await request(app).get(`/api/v1/projects/${invalidId}`);
+    it('should return a 404 if a palette ID does not exist', async () => {
+      const invalidId = -2;
 
-    expect(response.status).toBe(404);
-    expect(response.body.error).toEqual('Project not found')
+      const response = await request(app).get(`/api/v1/palettes/${invalidId}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('Palette not found')
+    })
   })
 })
