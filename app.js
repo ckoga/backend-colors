@@ -139,7 +139,6 @@ app.patch('/api/v1/projects/:id', async (request, response) => {
     response.status(404).json({ error: 'Project not found' })
   }
   
-  console.log('app: ', newTitle)
   try {
     const updatedProject = await database('projects').where({ id: id }).update(newTitle, 'id');
     response.status(200).json(updatedProject)

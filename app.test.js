@@ -194,12 +194,18 @@ describe('server', () => {
       const newTitle = { title: '80\'s Neon' };
       const response = await request(app).patch(`/api/v1/projects/${id}`).send(newTitle)
       expectedProject = await database('projects').first();
-      console.log('app_test: ', newTitle)
 
       expect(response.status).toBe(200);
       expect(expectedProject.title).toEqual('80\'s Neon');
     })
   });
 
-  
+  it('should return a 404 if a project ID does not exist', async () => {
+    const invalidId = -2;
+
+    const response = await request(app).get(`/api/v1/projects/${invalidId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toEqual('Project not found')
+  })
 })
