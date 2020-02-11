@@ -131,5 +131,20 @@ app.get('/api/v1/palettes/:id', async (request, response) => {
   }
 })
 
-
+app.patch('/api/v1/projects/:id', async (request, response) => {
+  const newTitle = request.body;
+  const { id } = request.params;
+  const targetProject = await database('projects').where('id', id)
+  if(!targetProject.length) {
+    response.status(404).json({ error: 'Project not found' })
+  }
+  
+  console.log('app: ', newTitle)
+  try {
+    const updatedProject = await database('projects').where({ id: id }).update(newTitle, 'id');
+    response.status(200).json(updatedProject)
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
 module.exports = app;
