@@ -64,7 +64,7 @@ describe('server', () => {
       }
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-      console.log(response.body)
+      
       const projects = await database('projects').where('id', response.body.id);
 
       const project = projects[0];
@@ -102,7 +102,7 @@ describe('server', () => {
 
       const palettes = await database('palettes').where('id', response.body.id)
       const palette = palettes[0];
-      
+      console.log(response.body)
       expect(response.status).toBe(201);
       expect(palette.title).toEqual('Colors')
     });
