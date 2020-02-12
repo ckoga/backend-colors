@@ -2,8 +2,20 @@
 Backend-colors is a database that stores projects that consist of up to three palettes.  This server works in conjunction with this [frontend-colors](https://github.com/nicknist/frontend-colors) application, if you would like to get, post or delete projects or palettes please follow the instructions in the README for frontend-colors repository.  To see some of the data please see below for the endpoints for backend-colors server.
 
 ## Set Up
-Clone down this repository, install the dependencies ``` npm i```.
-You can run tests with the ```npm test``` command.
+- Clone down this repository, cd into it, and install the dependencies ``` npm i```.
+- In order to run tests, use PostgreSQL to create a database called 'projects' (Commands below):
+```
+psql
+CREATE DATABASE projects;
+```
+- Once you have made the databse, run the following commands to use the latest migration and seed files
+```
+knex migrate:latest
+knex migrate:latest --env=test
+knex seed:run
+knex seed:run --env=test
+```
+- Now it should be all set up! You can now run tests with the ```npm test``` command.
 
 ## tech
 - express
