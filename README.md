@@ -1,4 +1,4 @@
-# backend-colors
+# Backend-colors
 Backend-colors is a database that stores projects that consist of up to three palettes.  This server works in conjunction with this [frontend-colors](https://github.com/nicknist/frontend-colors) application, if you would like to get, post or delete projects or palettes please follow the instructions in the README for frontend-colors repository.  To see some of the data please see below for the endpoints for backend-colors server.
 
 ## Set Up
