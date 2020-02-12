@@ -26,7 +26,7 @@ describe('server', () => {
 
       const response = await request(app).get('/api/v1/projects');
       const projects = response.body;
-      
+
       expect(response.status).toBe(200);
       expect(projects[0].id).toEqual(expectedProjects[0].id);
     });
@@ -48,7 +48,7 @@ describe('server', () => {
       const invalidId = -1;
 
       const response = await request(app).get(`/api/v1/projects/${invalidId}`);
-      
+
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual('Project not found')
     });
@@ -64,14 +64,14 @@ describe('server', () => {
       }
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-      
+
       const projects = await database('projects').where('id', response.body.id);
 
       const project = projects[0];
 
       expect(response.status).toBe(201);
       expect(project.title).toEqual('Unicorn farts')
-    }) 
+    })
 
     it('should return a 422 status code when the required parameters are incorrect', async () => {
       const badProject = {
@@ -81,7 +81,7 @@ describe('server', () => {
       }
 
       const response = await request(app).post('/api/v1/projects').send(badProject)
-      
+
       expect(response.status).toBe(422);
       expect(response.body.error).toEqual('Expected POST format: { title: <string>, palette1_name: <string>, palette2_name: <string>, palette3_name: <string>}.  You\'re missing the palette1_name property.')
     })
@@ -102,7 +102,7 @@ describe('server', () => {
 
       const palettes = await database('palettes').where('id', response.body.id)
       const palette = palettes[0];
-      
+
       expect(response.status).toBe(201);
       expect(palette.title).toEqual('Colors')
     });
@@ -127,9 +127,9 @@ describe('server', () => {
     it('should delete a project by its id', async () => {
       const mockProject = await database('projects').first();
       const { id } = mockProject;
-      
+
       const response = await request(app).delete(`/api/v1/projects/${id}`);
-      
+
       const remainingProjects = await database('projects').select();
 
       expect(response.status).toBe(204);
@@ -141,11 +141,11 @@ describe('server', () => {
     it('should delete a palette by its id', async () => {
       const mockPalette = await database('palettes').first();
       const { id } = mockPalette;
-      
+
       const response = await request(app).delete(`/api/v1/palettes/${id}`);
-      
+
       const remainingPalettes = await database('palettes').select();
-      
+
       expect(response.status).toBe(204);
       expect(remainingPalettes.length).toEqual(3)
     });
@@ -166,12 +166,12 @@ describe('server', () => {
   describe('GET /api/v1/palettes/:id', () => {
     it('should return a specific palette by id and a status code of 200', async () => {
       const expectedPalette = await database('palettes').first();
-      
+
       const { id } = expectedPalette;
 
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const result = response.body
-      
+
       expect(response.status).toBe(200);
       expect(result.id).toEqual(id);
     });
@@ -198,12 +198,12 @@ describe('server', () => {
       expect(response.status).toBe(200);
       expect(expectedProject.title).toEqual('80\'s Neon');
     })
-    
+
     it('should return a 404 if a project ID does not exist', async () => {
       const invalidId = -2;
-  
+
       const response = await request(app).get(`/api/v1/projects/${invalidId}`);
-  
+
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual('Project not found')
     });
@@ -214,11 +214,10 @@ describe('server', () => {
       let expectedPalette = await database('palettes').where({title: 'TEST NUKE PALETTE'});
       const { id } = expectedPalette[0];
       expect(expectedPalette[0].title).toEqual('TEST NUKE PALETTE');
-      
+
       const newTitle = { title: 'TEST CHANGE PALETTE' };
       const response = await request(app).patch(`/api/v1/palettes/${id}`).send(newTitle);
       let patchedPalette = await database('palettes').where({title: 'TEST CHANGE PALETTE'});
-      console.log(patchedPalette)
       expect(response.status).toBe(200);
       expect(patchedPalette[0].title).toEqual('TEST CHANGE PALETTE');
     });
@@ -231,5 +230,27 @@ describe('server', () => {
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual('Palette not found')
     })
+  })
+
+  describe('GET /api/v1/project?:title', () => {
+    it('should return a status code of 200 and a project with a matching name', async () => {
+      const expectedProject = await database('projects').first();
+      const { title } = expectedProject;
+
+      const response = await request(app).get(`/api/v1/project?title=${title}`);
+      const result = response.body[0]
+
+      expect(response.status).toBe(200);
+      expect(result.title).toEqual(title);
+    })
+
+    it('should return a 404 status code if the project does NOT exist in the DB', async () => {
+      const invalidTitle = 'nope';
+
+      const response = await request(app).get(`/api/v1/project?title=${invalidTitle}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual('Project not found')
+    });
   })
 })
