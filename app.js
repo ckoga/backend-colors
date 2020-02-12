@@ -52,7 +52,7 @@ app.post('/api/v1/palettes', async (request, response) => {
 
   try {
     let newPalette = await database('palettes').insert(palette, '*');
-    
+
     response.status(201).json(newPalette[0])
   } catch (error) {
     response.status(500).json({ error })
@@ -61,7 +61,7 @@ app.post('/api/v1/palettes', async (request, response) => {
 
 app.post('/api/v1/projects', async (request, response) => {
   const project = request.body;
-  
+
   for (let requiredParameter of ['title', 'palette1_name', 'palette2_name', 'palette3_name']) {
     if (!project[requiredParameter]) {
       return response.status(422).send({
@@ -138,7 +138,7 @@ app.patch('/api/v1/projects/:id', async (request, response) => {
   if(!targetProject.length) {
     response.status(404).json({ error: 'Project not found' })
   }
-  
+
   try {
     const updatedProject = await database('projects').where({ id: id }).update(newTitle, 'id');
     response.status(200).json(updatedProject)
@@ -152,11 +152,26 @@ app.patch('/api/v1/palettes/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    console.log(newTitle)
     const updatedPalette = await database('palettes').where({ id: id }).update(newTitle, 'id');
     !updatedPalette ? response.sendStatus(404) : response.status(200).json(updatedPalette)
   } catch (error) {
     response.status(500).json({ error })
   }
 })
+
+app.get('/api/v1/project', async (request, response) => {
+  const { title } = request.query;
+
+  try {
+    const project = await database('projects').where('title', title);
+    if (project.length) {
+      response.status(200).json(project);
+    } else {
+      response.status(404).json({ error: 'Project not found' })
+    }
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+})
+
 module.exports = app;
